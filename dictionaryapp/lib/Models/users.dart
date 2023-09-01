@@ -4,7 +4,12 @@ class Word {
   final String meaning;
   final String description;
 
-  Word({required this.id, required this.word, required this.meaning, required this.description});
+  Word({
+    required this.id,
+    required this.word,
+    required this.meaning,
+    required this.description,
+  });
 
   Map<String, dynamic> toMap() {
     return {

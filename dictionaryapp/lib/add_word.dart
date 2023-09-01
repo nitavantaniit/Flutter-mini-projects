@@ -14,8 +14,8 @@ class _AddWordScreenState extends State<AddWordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Word'), backgroundColor: Colors.blue[900],),
-      backgroundColor: Colors.black,
+      appBar: AppBar(title: Text('Add Word'), backgroundColor: Colors.red[900],),
+      backgroundColor: Colors.blueGrey,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -68,7 +68,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
         'meaning': meaning,
         'description': description,
       };
-      await DatabaseHelper.instance.addWord(wordMap);
+      await DatabaseHelper.instance.insertWord(wordMap);
     }
   }
 }

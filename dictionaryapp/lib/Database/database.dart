@@ -1,70 +1,75 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+final String tableWords = 'words';
+final String colId = 'id';
+final String colWord = 'word';
+final String colMeaning = 'meaning';
+final String colDescription = 'description';
 
 class DatabaseHelper {
-  late Database _database;
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  static Database? _database;
 
   DatabaseHelper._privateConstructor();
 
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
 
-  Future<void> initializeDatabase() async {
-    String path = await getDatabasesPath();
-    _database = await openDatabase(
-      join(path, 'dictionary.db'),
+  Future<Database> _initDatabase() async {
+    final String dbPath = await getDatabasesPath();
+    final String path = join(dbPath, 'dictionary.db');
+
+    return await openDatabase(
+      path,
       version: 1,
-      onCreate: (db, version) {
-        db.execute('''
-          CREATE TABLE words(
-            id INTEGER PRIMARY KEY,
-            word TEXT,
-            meaning TEXT,
-            description TEXT
-          )
-        ''');
-      },
+      onCreate: _createDb,
     );
+  }
+
+  Future<void> _createDb(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE $tableWords (
+        $colId INTEGER PRIMARY KEY AUTOINCREMENT,
+        $colWord TEXT NOT NULL,
+        $colMeaning TEXT NOT NULL,
+        $colDescription TEXT
+      )
+    ''');
+  }
+
+  Future<int> insertWord(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(tableWords, row);
   }
 
   Future<List<Map<String, dynamic>>> getAllWords() async {
-    await initializeDatabase();
-    return await _database.query('words');
+    Database db = await instance.database;
+    return await db.query(tableWords);
   }
 
-  Future<void> addWord(Map<String, dynamic> wordMap) async {
-    await initializeDatabase();
-    await _database.insert('words', wordMap);
+  Future<int> updateWord(int id, Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.update(tableWords, row, where: '$colId = ?', whereArgs: [id]);
   }
 
-  Future<void> editWord(int id, Map<String, dynamic> wordMap) async {
-    await initializeDatabase();
-    await _database.update(
-      'words',
-      wordMap,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<void> deleteWord(int id) async {
-    await initializeDatabase();
-    await _database.delete(
-      'words',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+  Future<int> deleteWord(int id) async {
+    Database db = await instance.database;
+    return await db.delete(tableWords, where: '$colId = ?', whereArgs: [id]);
   }
 
   Future<Map<String, dynamic>> getWordById(int id) async {
-    await initializeDatabase();
-    List<Map<String, dynamic>> results = await _database.query(
-      'words',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (results.isNotEmpty) {
-      return results.first;
-    }
-    return {}; // Return an empty map if no word is found
+    Database db = await instance.database;
+    List<Map<String, dynamic>> maps = await db.query(tableWords, where: '$colId = ?', whereArgs: [id]);
+    return maps.first;
+  }
+
+  Future<Map<String, dynamic>> getWordByWord(String word) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> maps = await db.query(tableWords, where: '$colWord = ?', whereArgs: [word]);
+    return maps.first;
   }
 }

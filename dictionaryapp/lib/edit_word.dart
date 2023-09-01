@@ -31,8 +31,8 @@ class _EditWordScreenState extends State<EditWordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Edit Word'), backgroundColor: Colors.blue[900],),
-      backgroundColor: Colors.black,
+      appBar: AppBar(title: Text('Edit Word'), backgroundColor: Colors.red[900],),
+      backgroundColor: Colors.blueGrey,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -85,7 +85,7 @@ class _EditWordScreenState extends State<EditWordScreen> {
         'meaning': newMeaning,
         'description': newDescription,
       };
-      await DatabaseHelper.instance.editWord(widget.wordId, updatedWordMap);
+      await DatabaseHelper.instance.updateWord(widget.wordId, updatedWordMap);
     }
   }
 }
