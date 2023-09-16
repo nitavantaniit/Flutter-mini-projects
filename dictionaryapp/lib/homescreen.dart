@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+  
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }

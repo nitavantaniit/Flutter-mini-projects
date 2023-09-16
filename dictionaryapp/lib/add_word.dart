@@ -2,6 +2,8 @@ import 'package:dictionaryapp/Database/database.dart';
 import 'package:flutter/material.dart';
 
 class AddWordScreen extends StatefulWidget {
+  const AddWordScreen({super.key});
+
   @override
   _AddWordScreenState createState() => _AddWordScreenState();
 }
